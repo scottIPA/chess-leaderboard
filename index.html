@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Office Chess Leaderboard</title>
+    <title>IPA Office Chess Leaderboard</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -99,11 +99,10 @@
         footer {
             text-align: center;
             margin-top: 30px;
-            color: #888;
-            font-size: 14px;
             background-color: #1a3c5c;
             color: white;
             padding: 20px 0;
+            font-size: 14px;
         }
         .last-updated {
             font-style: italic;
@@ -137,463 +136,213 @@
             color: #166634;
             font-weight: bold;
         }
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #666;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+        }
+        .info-box {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #c3e6cb;
+        }
+        /* Spinner animation */
+        .spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #166634;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 20px auto;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Office Chess Leaderboard</h1>
+            <h1>IPA OFFICE CHESS CHAMPIONSHIP</h1>
             <div class="subtitle">Championship Series 2025</div>
         </header>
         
-        <div class="leaderboard">
-            <table>
-                <thead>
-                    <tr>
-                        <th class="rank">Rank</th>
-                        <th class="name">Player</th>
-                        <th class="win">Wins</th>
-                        <th class="loss">Losses</th>
-                        <th class="draw">Draws</th>
-                    </tr>
-                </thead>
-                <tbody id="playerTableBody">
-                    <!-- Table will be populated with JavaScript -->
-                </tbody>
-            </table>
-            
-            <div class="last-updated">Last updated: <span id="lastUpdated"></span></div>
-        </div>
-        
-        <div class="game-log-container">
-            <h2>Recent Games</h2>
-            <div class="game-log">
+        <div id="main-view">
+            <div class="leaderboard">
+                <h2>Current Standings</h2>
                 <table>
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Player 1</th>
-                            <th>Player 2</th>
-                            <th>Winner</th>
+                            <th class="rank">Rank</th>
+                            <th class="name">Player</th>
+                            <th class="win">Wins</th>
+                            <th class="loss">Losses</th>
+                            <th class="draw">Draws</th>
                         </tr>
                     </thead>
-                    <tbody id="gameLogTableBody">
-                        <!-- Game log will be populated with JavaScript -->
+                    <tbody id="playerTableBody">
+                        <tr>
+                            <td colspan="5" class="loading">
+                                <div class="spinner"></div>
+                                <p>Loading leaderboard data...</p>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
+                
+                <div class="last-updated">Last updated: <span id="lastUpdated">Loading...</span></div>
+            </div>
+            
+            <div class="game-log-container">
+                <h2>Recent Games</h2>
+                <div class="game-log">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Player 1</th>
+                                <th>Player 2</th>
+                                <th>Winner</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gameLogTableBody">
+                            <tr>
+                                <td colspan="4" class="loading">
+                                    <div class="spinner"></div>
+                                    <p>Loading game history...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Admin Information Box -->
+            <div class="info-box">
+                <h3>About This Leaderboard</h3>
+                <p>This leaderboard is automatically updated from the official IPA Office Chess Championship spreadsheet.</p>
+                <p>Updates occur in real-time as the spreadsheet is modified.</p>
             </div>
         </div>
         
         <footer>
-            <p>Office Chess Championship — Add your company name here</p>
+            <p>IPA Office Chess Championship — © 2025 Illinois Principals Association</p>
         </footer>
     </div>
 
     <script>
-        // Sample player data - all IPA staff but no games played yet
-        const players = [
-            { name: "Laura Adams", wins: 0, losses: 0, draws: 0 },
-            { name: "Beth Broyles", wins: 0, losses: 0, draws: 0 },
-            { name: "Pam Burdine", wins: 0, losses: 0, draws: 0 },
-            { name: "Adam Geisen", wins: 0, losses: 0, draws: 0 },
-            { name: "Mari Handy", wins: 0, losses: 0, draws: 0 },
-            { name: "Dave Heinzel", wins: 0, losses: 0, draws: 0 },
-            { name: "Susan Homes", wins: 0, losses: 0, draws: 0 },
-            { name: "Chan-Tell King-Beckwith", wins: 0, losses: 0, draws: 0 },
-            { name: "Jason Leahy", wins: 0, losses: 0, draws: 0 },
-            { name: "Alison Maley", wins: 0, losses: 0, draws: 0 },
-            { name: "Mat Marietta", wins: 0, losses: 0, draws: 0 },
-            { name: "Rose McCarthy", wins: 0, losses: 0, draws: 0 },
-            { name: "Julie Miener", wins: 0, losses: 0, draws: 0 },
-            { name: "Kim Nehrt", wins: 0, losses: 0, draws: 0 },
-            { name: "Arlin Peebles", wins: 0, losses: 0, draws: 0 },
-            { name: "Daryl Peel", wins: 0, losses: 0, draws: 0 },
-            { name: "Brian D. Schwartz", wins: 0, losses: 0, draws: 0 },
-            { name: "Sydnee Sturdivant", wins: 0, losses: 0, draws: 0 },
-            { name: "Meghan Tolson", wins: 0, losses: 0, draws: 0 },
-            { name: "Scott Wilkinson", wins: 0, losses: 0, draws: 0 },
-            { name: "Lynne Woodrum", wins: 0, losses: 0, draws: 0 }
-        ];
-        
-        // Empty game log - no games played yet
-        const gameLog = [];
-        
-        // Admin Configuration
-        const adminConfig = {
-            password: "ipaChess2025", // Change this to your desired admin password
-            qrCodeInstalled: false    // Will be set to true when QR code library is loaded
+        // Configuration - replace these with your Sheety API URLs
+        const config = {
+            // Your Sheety API URLs
+            playersApiUrl: 'https://api.sheety.co/421ea0f34197af43f9c53150d5dbf197/ipachessleaderboard/players',
+            gamesApiUrl: 'https://api.sheety.co/421ea0f34197af43f9c53150d5dbf197/ipachessleaderboard/games',
+            
+            // Refresh interval in milliseconds (5 minutes)
+            refreshInterval: 5 * 60 * 1000
         };
+
+        // Data storage
+        let players = [];
+        let gameLog = [];
         
-        // Data Management (without localStorage)
-        function saveData() {
-            // This is intentionally empty - we're not using localStorage anymore
-            // Data changes will be kept in memory until page refresh or export
-            console.log("Data changes will be kept in memory until page refresh");
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initial data load
+            fetchData();
             
-            // Show notification
-            showNotification("Changes saved successfully!");
-        }
+            // Set up auto-refresh
+            setInterval(fetchData, config.refreshInterval);
+        });
         
-        function loadData() {
-            // No loading needed - we're using the initial data
-            console.log("Using initial sample data");
-        }
-        
-        // Notification System
-        function showNotification(message) {
-            // Create notification element if it doesn't exist
-            let notification = document.querySelector('.notification');
-            if (!notification) {
-                notification = document.createElement('div');
-                notification.className = 'notification';
-                document.body.appendChild(notification);
-            }
-            
-            // Set message and show notification
-            notification.textContent = message;
-            notification.classList.add('show');
-            
-            // Hide notification after 3 seconds
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-        
-        // UI Navigation and Form Management
-        function showForm(formId) {
-            // Hide main view
-            document.getElementById('main-view').style.display = 'none';
-            
-            // Hide all forms
-            document.querySelectorAll('.form-container').forEach(form => {
-                form.style.display = 'none';
-            });
-            
-            // Show requested form
-            document.getElementById(formId).style.display = 'block';
-            
-            // Focus on first input in the form
-            document.getElementById(formId).querySelector('select, input').focus();
-        }
-        
-        function showMainView() {
-            // Hide all forms
-            document.querySelectorAll('.form-container').forEach(form => {
-                form.style.display = 'none';
-            });
-            
-            // Show main view
-            document.getElementById('main-view').style.display = 'block';
-            
-            // Focus on first button
-            document.getElementById('add-game-btn').focus();
-        }
-        
-        function populatePlayerDropdowns() {
-            // Get all player select elements
-            const playerSelects = document.querySelectorAll('#player1, #player2, #edit-player');
-            
-            // Clear existing options
-            playerSelects.forEach(select => {
-                select.innerHTML = '';
-            });
-            
-            // Add player options
-            players.forEach(player => {
-                const option = document.createElement('option');
-                option.value = player.name;
-                option.textContent = player.name;
-                
-                playerSelects.forEach(select => {
-                    select.appendChild(option.cloneNode(true));
-                });
-            });
-        }
-        
-        // Game and Player Management
-        function addNewGame() {
-            const player1 = document.getElementById('player1').value;
-            const player2 = document.getElementById('player2').value;
-            const result = document.getElementById('result').value;
-            
-            // Validation
-            if (player1 === player2) {
-                alert('Please select different players');
-                return;
-            }
-            
-            // Determine winner and loser
-            let winner, loser, resultType;
-            if (result === 'draw') {
-                winner = player1;
-                loser = player2;
-                resultType = 'draw';
-                
-                // Update player stats
-                updatePlayerStats(player1, 0, 0, 1);
-                updatePlayerStats(player2, 0, 0, 1);
-            } else if (result === 'player1') {
-                winner = player1;
-                loser = player2;
-                resultType = 'win';
-                
-                // Update player stats
-                updatePlayerStats(player1, 1, 0, 0);
-                updatePlayerStats(player2, 0, 1, 0);
-            } else {
-                winner = player2;
-                loser = player1;
-                resultType = 'win';
-                
-                // Update player stats
-                updatePlayerStats(player2, 1, 0, 0);
-                updatePlayerStats(player1, 0, 1, 0);
-            }
-            
-            // Add to game log
-            const newGame = {
-                winner: winner,
-                loser: loser,
-                result: resultType,
-                date: new Date().toISOString()
-            };
-            
-            gameLog.unshift(newGame); // Add to beginning of array
-            
-            // Save data
-            saveData();
-            
-            // Update UI
-            populateLeaderboard();
-            populateGameLog();
-            
-            // Return to main view
-            showMainView();
-        }
-        
-        function addNewPlayer() {
-            const playerName = document.getElementById('player-name').value.trim();
-            
-            // Validation
-            if (!playerName) {
-                alert('Please enter a player name');
-                return;
-            }
-            
-            // Check if player already exists
-            if (players.some(p => p.name === playerName)) {
-                alert('A player with this name already exists');
-                return;
-            }
-            
-            // Add new player
-            const newPlayer = {
-                name: playerName,
-                wins: 0,
-                losses: 0,
-                draws: 0
-            };
-            
-            players.push(newPlayer);
-            
-            // Save data
-            saveData();
-            
-            // Update UI
-            populateLeaderboard();
-            populatePlayerDropdowns();
-            
-            // Clear form and return to main view
-            document.getElementById('player-name').value = '';
-            showMainView();
-        }
-        
-        function updatePlayerStats(playerName, winsToAdd, lossesToAdd, drawsToAdd) {
-            // Find player
-            const playerIndex = players.findIndex(p => p.name === playerName);
-            if (playerIndex === -1) return;
-            
-            // Update stats
-            players[playerIndex].wins += winsToAdd;
-            players[playerIndex].losses += lossesToAdd;
-            players[playerIndex].draws += drawsToAdd;
-        }
-        
-        function editPlayerStats() {
-            const playerName = document.getElementById('edit-player').value;
-            const wins = parseInt(document.getElementById('edit-wins').value);
-            const losses = parseInt(document.getElementById('edit-losses').value);
-            const draws = parseInt(document.getElementById('edit-draws').value);
-            
-            // Validation
-            if (isNaN(wins) || isNaN(losses) || isNaN(draws) || wins < 0 || losses < 0 || draws < 0) {
-                alert('Please enter valid numbers for wins, losses, and draws');
-                return;
-            }
-            
-            // Find player and update
-            const playerIndex = players.findIndex(p => p.name === playerName);
-            if (playerIndex !== -1) {
-                players[playerIndex].wins = wins;
-                players[playerIndex].losses = losses;
-                players[playerIndex].draws = draws;
-                
-                // Save data
-                saveData();
-                
-                // Update UI
-                populateLeaderboard();
-                
-                // Return to main view
-                showMainView();
-            }
-        }
-        
-        function loadEditPlayerForm() {
-            const playerSelect = document.getElementById('edit-player');
-            const selectedPlayer = playerSelect.value;
-            
-            // Find player
-            const player = players.find(p => p.name === selectedPlayer);
-            if (!player) return;
-            
-            // Set form values
-            document.getElementById('edit-wins').value = player.wins;
-            document.getElementById('edit-losses').value = player.losses;
-            document.getElementById('edit-draws').value = player.draws;
-        }
-        
-        // Admin Functions
-        function showAdminLogin() {
-            showForm('admin-login-form');
-        }
-        
-        function attemptLogin() {
-            const password = document.getElementById('admin-password').value;
-            
-            if (password === adminConfig.password) {
-                // Successful login
-                document.getElementById('admin-password').value = '';
-                showForm('admin-panel');
-                
-                // Generate QR code if library is loaded
-                if (adminConfig.qrCodeInstalled && typeof QRCode !== 'undefined') {
-                    const qrCodeDiv = document.getElementById('qrcode');
-                    qrCodeDiv.innerHTML = '';
-                    
-                    new QRCode(qrCodeDiv, {
-                        text: window.location.href,
-                        width: 200,
-                        height: 200,
-                        colorDark: "#166634",
-                        colorLight: "#ffffff"
-                    });
-                }
-            } else {
-                // Failed login
-                alert('Incorrect password. Please try again.');
-            }
-        }
-        
-        function exportData() {
-            // Create export container with players and game log
-            const exportData = {
-                players: players,
-                gameLog: gameLog,
-                exportDate: new Date().toISOString()
-            };
-            
-            // Convert to JSON string
-            const jsonData = JSON.stringify(exportData, null, 2);
-            
-            // Display in textarea
-            document.getElementById('export-data').value = jsonData;
-            document.getElementById('export-container').style.display = 'block';
-            document.getElementById('import-container').style.display = 'none';
-        }
-        
-        function copyExportData() {
-            const textarea = document.getElementById('export-data');
-            textarea.select();
-            document.execCommand('copy');
-            
-            showNotification('Data copied to clipboard!');
-        }
-        
-        function showImportForm() {
-            document.getElementById('import-container').style.display = 'block';
-            document.getElementById('export-container').style.display = 'none';
-            document.getElementById('import-data').focus();
-        }
-        
-        function importData() {
+        // Fetch data from Sheety API
+        async function fetchData() {
             try {
-                const jsonData = document.getElementById('import-data').value;
+                // Show loading state
+                document.getElementById('playerTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="5" class="loading">
+                            <div class="spinner"></div>
+                            <p>Loading leaderboard data...</p>
+                        </td>
+                    </tr>
+                `;
                 
-                if (!jsonData.trim()) {
-                    alert('Please paste data to import.');
-                    return;
+                document.getElementById('gameLogTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="4" class="loading">
+                            <div class="spinner"></div>
+                            <p>Loading game history...</p>
+                        </td>
+                    </tr>
+                `;
+                
+                // Fetch players data
+                const playersResponse = await fetch(config.playersApiUrl);
+                if (!playersResponse.ok) {
+                    throw new Error('Failed to fetch players data');
                 }
                 
-                const importedData = JSON.parse(jsonData);
+                const playersData = await playersResponse.json();
+                players = playersData.players.map(player => ({
+                    name: player.name,
+                    wins: parseInt(player.wins || 0),
+                    losses: parseInt(player.losses || 0),
+                    draws: parseInt(player.draws || 0)
+                }));
                 
-                // Validate imported data
-                if (!importedData.players || !Array.isArray(importedData.players) || 
-                    !importedData.gameLog || !Array.isArray(importedData.gameLog)) {
-                    throw new Error('Invalid data format');
+                // Fetch games data
+                const gamesResponse = await fetch(config.gamesApiUrl);
+                if (!gamesResponse.ok) {
+                    throw new Error('Failed to fetch games data');
                 }
                 
-                // Clear existing data
-                players.length = 0;
-                gameLog.length = 0;
+                const gamesData = await gamesResponse.json();
+                gameLog = gamesData.games.map(game => ({
+                    date: game.date,
+                    player1: game.player1,
+                    player2: game.player2,
+                    winner: game.winner
+                }));
                 
-                // Import players
-                importedData.players.forEach(player => {
-                    players.push({
-                        name: player.name || 'Unknown',
-                        wins: parseInt(player.wins) || 0,
-                        losses: parseInt(player.losses) || 0,
-                        draws: parseInt(player.draws) || 0
-                    });
-                });
-                
-                // Import game log
-                importedData.gameLog.forEach(game => {
-                    gameLog.push({
-                        winner: game.winner || 'Unknown',
-                        loser: game.loser || 'Unknown',
-                        result: game.result || 'win',
-                        date: game.date || new Date().toISOString()
-                    });
-                });
-                
-                // Update UI
+                // Update UI with the data
                 populateLeaderboard();
                 populateGameLog();
-                populatePlayerDropdowns();
                 
-                // Hide import form
-                document.getElementById('import-container').style.display = 'none';
-                document.getElementById('import-data').value = '';
+                // Update the timestamp
+                document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
                 
-                showNotification('Data imported successfully!');
             } catch (error) {
-                alert('Error importing data: ' + error.message);
+                console.error('Error fetching data:', error);
+                showError();
             }
         }
         
-        function resetAllData() {
-            if (confirm('Are you sure you want to reset all data? This will remove all players and games.')) {
-                // Clear all data
-                players.length = 0;
-                gameLog.length = 0;
-                
-                // Update UI
-                populateLeaderboard();
-                populateGameLog();
-                
-                showNotification('All data has been reset!');
-            }
+        // Show error message
+        function showError() {
+            const errorMessage = `
+                <tr>
+                    <td colspan="5" class="error">
+                        <p>Error loading data. Please try again later.</p>
+                    </td>
+                </tr>
+            `;
+            
+            document.getElementById('playerTableBody').innerHTML = errorMessage;
+            document.getElementById('gameLogTableBody').innerHTML = errorMessage.replace('colspan="5"', 'colspan="4"');
         }
         
         // Table Population
@@ -611,7 +360,19 @@
             const tableBody = document.getElementById('playerTableBody');
             tableBody.innerHTML = '';
             
-            sortedPlayers.forEach((player, index) => {
+            // Filter to only show players with games
+            const activePlayers = sortedPlayers.filter(p => p.wins > 0 || p.losses > 0 || p.draws > 0);
+            
+            if (activePlayers.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center;">No games recorded yet</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            activePlayers.forEach((player, index) => {
                 const row = document.createElement('tr');
                 
                 // Apply top player styling
@@ -633,186 +394,60 @@
                 
                 tableBody.appendChild(row);
             });
-            
-            // Update the last updated timestamp
-            document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
         }
         
         function populateGameLog() {
             // Sort games by date (newest first)
-            const sortedGames = [...gameLog].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const sortedGames = [...gameLog].sort((a, b) => {
+                // Convert dates to comparable format (newest first)
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                return dateB - dateA;
+            });
             
             const gameLogTableBody = document.getElementById('gameLogTableBody');
             gameLogTableBody.innerHTML = '';
             
             if (sortedGames.length === 0) {
                 // No games yet
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td colspan="4" style="text-align: center;">No games played yet</td>
+                gameLogTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center;">No games played yet</td>
+                    </tr>
                 `;
-                gameLogTableBody.appendChild(row);
                 return;
             }
             
             sortedGames.forEach(game => {
                 const row = document.createElement('tr');
                 
-                // Format the date (date only, no time)
-                const gameDate = new Date(game.date);
-                const formattedDate = gameDate.toLocaleDateString();
+                // Format the date
+                let formattedDate = game.date;
+                try {
+                    const dateObj = new Date(game.date);
+                    if (!isNaN(dateObj.getTime())) {
+                        formattedDate = dateObj.toLocaleDateString();
+                    }
+                } catch (e) {
+                    // If date parsing fails, just use the original
+                    console.log('Date parsing failed for:', game.date);
+                }
                 
-                // Only show the winner
-                let winnerName = game.result === 'draw' ? 'Draw' : game.winner;
+                // Determine winner highlight
+                const isPlayer1Winner = game.winner === game.player1;
+                const isPlayer2Winner = game.winner === game.player2;
+                const isDraw = game.winner === "Draw";
                 
                 row.innerHTML = `
                     <td>${formattedDate}</td>
-                    <td class="${game.winner === winnerName ? 'winner-highlight' : ''}">${game.winner}</td>
-                    <td>${game.loser}</td>
-                    <td class="winner-highlight">${winnerName}</td>
+                    <td class="${isPlayer1Winner ? 'winner-highlight' : ''}">${game.player1}</td>
+                    <td class="${isPlayer2Winner ? 'winner-highlight' : ''}">${game.player2}</td>
+                    <td class="winner-highlight">${isDraw ? 'Draw' : game.winner}</td>
                 `;
                 
                 gameLogTableBody.appendChild(row);
             });
         }
-        
-        // Remote Control Keyboard Navigation
-        function setupKeyboardNavigation() {
-            document.addEventListener('keydown', function(e) {
-                // Remote control navigation with arrow keys
-                const activeElement = document.activeElement;
-                
-                switch(e.key) {
-                    case 'ArrowUp':
-                        // Navigate to previous focusable element
-                        navigateFocus('prev');
-                        e.preventDefault();
-                        break;
-                    case 'ArrowDown':
-                        // Navigate to next focusable element
-                        navigateFocus('next');
-                        e.preventDefault();
-                        break;
-                    case 'Enter':
-                        // Simulate click on focused element
-                        if (activeElement && activeElement.tagName !== 'SELECT' && activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
-                            activeElement.click();
-                        }
-                        break;
-                    case 'Escape':
-                    case 'Backspace':
-                        // Return to main view
-                        showMainView();
-                        e.preventDefault();
-                        break;
-                }
-            });
-        }
-        
-        function navigateFocus(direction) {
-            const focusableElements = Array.from(document.querySelectorAll('button, select, input, textarea'));
-            const currentIndex = focusableElements.indexOf(document.activeElement);
-            
-            let nextIndex;
-            if (direction === 'next') {
-                nextIndex = (currentIndex + 1) % focusableElements.length;
-            } else {
-                nextIndex = (currentIndex - 1 + focusableElements.length) % focusableElements.length;
-            }
-            
-            focusableElements[nextIndex].focus();
-        }
-        
-        // Dynamically load QR code library
-        function loadQRCodeLibrary() {
-            if (typeof QRCode === 'undefined') {
-                const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
-                script.onload = function() {
-                    adminConfig.qrCodeInstalled = true;
-                };
-                document.head.appendChild(script);
-            } else {
-                adminConfig.qrCodeInstalled = true;
-            }
-        }
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load QR code library
-            loadQRCodeLibrary();
-            
-            // Load saved data
-            loadData();
-            
-            // Populate tables
-            populateLeaderboard();
-            populateGameLog();
-            populatePlayerDropdowns();
-            
-            // Setup form display buttons
-            document.getElementById('add-game-btn').addEventListener('click', function() {
-                populatePlayerDropdowns();
-                showForm('add-game-form');
-            });
-            
-            document.getElementById('add-player-btn').addEventListener('click', function() {
-                showForm('add-player-form');
-            });
-            
-            document.getElementById('edit-player-btn').addEventListener('click', function() {
-                populatePlayerDropdowns();
-                showForm('edit-player-form');
-                loadEditPlayerForm();
-            });
-            
-            document.getElementById('admin-btn').addEventListener('click', showAdminLogin);
-            
-            // Setup form action buttons
-            document.getElementById('save-game-btn').addEventListener('click', addNewGame);
-            document.getElementById('cancel-game-btn').addEventListener('click', showMainView);
-            
-            document.getElementById('save-player-btn').addEventListener('click', addNewPlayer);
-            document.getElementById('cancel-player-btn').addEventListener('click', showMainView);
-            
-            document.getElementById('update-player-btn').addEventListener('click', editPlayerStats);
-            document.getElementById('cancel-edit-btn').addEventListener('click', showMainView);
-            
-            // Setup admin buttons
-            document.getElementById('login-btn').addEventListener('click', attemptLogin);
-            document.getElementById('cancel-login-btn').addEventListener('click', showMainView);
-            document.getElementById('admin-logout-btn').addEventListener('click', showMainView);
-            
-            document.getElementById('export-data-btn').addEventListener('click', exportData);
-            document.getElementById('copy-export-btn').addEventListener('click', copyExportData);
-            document.getElementById('close-export-btn').addEventListener('click', function() {
-                document.getElementById('export-container').style.display = 'none';
-            });
-            
-            document.getElementById('import-data-btn').addEventListener('click', showImportForm);
-            document.getElementById('confirm-import-btn').addEventListener('click', importData);
-            document.getElementById('cancel-import-btn').addEventListener('click', function() {
-                document.getElementById('import-container').style.display = 'none';
-                document.getElementById('import-data').value = '';
-            });
-            
-            document.getElementById('reset-data-btn').addEventListener('click', resetAllData);
-            
-            // Setup dropdown change handler
-            document.getElementById('edit-player').addEventListener('change', loadEditPlayerForm);
-            
-            // Setup keyboard navigation for remote control
-            setupKeyboardNavigation();
-            
-            // Focus on first control button
-            document.getElementById('add-game-btn').focus();
-            
-            // Auto-refresh every 5 minutes
-            setInterval(() => {
-                populateLeaderboard();
-                populateGameLog();
-            }, 5 * 60 * 1000);
-        });
     </script>
 </body>
 </html>
