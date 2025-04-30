@@ -190,47 +190,73 @@
     </div>
 
     <script>
-        // Sample player data - replace with your actual data
+        // Sample player data - all IPA staff but no games played yet
         const players = [
-            { name: "Sarah Johnson", wins: 15, losses: 3, draws: 2 },
-            { name: "Michael Chen", wins: 12, losses: 5, draws: 3 },
-            { name: "David Rodriguez", wins: 10, losses: 7, draws: 3 },
-            { name: "Emily Wong", wins: 9, losses: 8, draws: 3 },
-            { name: "James Wilson", wins: 8, losses: 9, draws: 3 },
-            { name: "Alexandra Kim", wins: 7, losses: 8, draws: 5 },
-            { name: "Robert Taylor", wins: 6, losses: 10, draws: 4 },
-            { name: "Maria Garcia", wins: 5, losses: 12, draws: 3 },
-            { name: "Thomas Brown", wins: 4, losses: 12, draws: 4 },
-            { name: "Lisa Martinez", wins: 3, losses: 15, draws: 2 }
+            { name: "Laura Adams", wins: 0, losses: 0, draws: 0 },
+            { name: "Beth Broyles", wins: 0, losses: 0, draws: 0 },
+            { name: "Pam Burdine", wins: 0, losses: 0, draws: 0 },
+            { name: "Adam Geisen", wins: 0, losses: 0, draws: 0 },
+            { name: "Mari Handy", wins: 0, losses: 0, draws: 0 },
+            { name: "Dave Heinzel", wins: 0, losses: 0, draws: 0 },
+            { name: "Dr. Susan Homes", wins: 0, losses: 0, draws: 0 },
+            { name: "Chan-Tell King-Beckwith", wins: 0, losses: 0, draws: 0 },
+            { name: "Dr. Jason Leahy", wins: 0, losses: 0, draws: 0 },
+            { name: "Alison Maley", wins: 0, losses: 0, draws: 0 },
+            { name: "Mat Marietta", wins: 0, losses: 0, draws: 0 },
+            { name: "Rose McCarthy", wins: 0, losses: 0, draws: 0 },
+            { name: "Julie Miener", wins: 0, losses: 0, draws: 0 },
+            { name: "Kim Nehrt", wins: 0, losses: 0, draws: 0 },
+            { name: "Arlin Peebles", wins: 0, losses: 0, draws: 0 },
+            { name: "Daryl Peel", wins: 0, losses: 0, draws: 0 },
+            { name: "Brian D. Schwartz", wins: 0, losses: 0, draws: 0 },
+            { name: "Sydnee Sturdivant", wins: 0, losses: 0, draws: 0 },
+            { name: "Meghan Tolson", wins: 0, losses: 0, draws: 0 },
+            { name: "Scott Wilkinson", wins: 0, losses: 0, draws: 0 },
+            { name: "Lynne Woodrum", wins: 0, losses: 0, draws: 0 }
         ];
         
-        // Sample game log data - replace with your actual games
-        const gameLog = [
-            { winner: "Sarah Johnson", loser: "Michael Chen", result: "win", date: "2025-04-29T14:30:00" },
-            { winner: "Emily Wong", loser: "James Wilson", result: "win", date: "2025-04-29T11:15:00" },
-            { winner: "David Rodriguez", loser: "Thomas Brown", result: "win", date: "2025-04-28T16:45:00" },
-            { winner: "Alexandra Kim", loser: "Robert Taylor", result: "win", date: "2025-04-28T13:20:00" },
-            { winner: "Sarah Johnson", loser: "Maria Garcia", result: "win", date: "2025-04-27T15:30:00" },
-            { winner: "Michael Chen", loser: "Lisa Martinez", result: "win", date: "2025-04-27T10:45:00" },
-            { winner: "Sarah Johnson", loser: "Alexandra Kim", result: "win", date: "2025-04-26T16:15:00" },
-            { winner: "David Rodriguez", loser: "Emily Wong", result: "draw", date: "2025-04-26T14:00:00" },
-            { winner: "Michael Chen", loser: "Thomas Brown", result: "win", date: "2025-04-25T11:30:00" },
-            { winner: "James Wilson", loser: "Lisa Martinez", result: "win", date: "2025-04-25T09:45:00" }
-        ];
+        // Empty game log - no games played yet
+        const gameLog = [];
+        
+        // Admin Configuration
+        const adminConfig = {
+            password: "ipaChess2025", // Change this to your desired admin password
+            qrCodeInstalled: false    // Will be set to true when QR code library is loaded
+        };
         
         // Data Management (without localStorage)
         function saveData() {
             // This is intentionally empty - we're not using localStorage anymore
-            // In a production environment, you might consider:
-            // 1. Using URL parameters to store minimal state
-            // 2. Using cookies if available on the TV
-            // 3. Creating a QR code to a web service where data can be managed
+            // Data changes will be kept in memory until page refresh or export
             console.log("Data changes will be kept in memory until page refresh");
+            
+            // Show notification
+            showNotification("Changes saved successfully!");
         }
         
         function loadData() {
             // No loading needed - we're using the initial data
             console.log("Using initial sample data");
+        }
+        
+        // Notification System
+        function showNotification(message) {
+            // Create notification element if it doesn't exist
+            let notification = document.querySelector('.notification');
+            if (!notification) {
+                notification = document.createElement('div');
+                notification.className = 'notification';
+                document.body.appendChild(notification);
+            }
+            
+            // Set message and show notification
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
         }
         
         // UI Navigation and Form Management
@@ -437,6 +463,139 @@
             document.getElementById('edit-draws').value = player.draws;
         }
         
+        // Admin Functions
+        function showAdminLogin() {
+            showForm('admin-login-form');
+        }
+        
+        function attemptLogin() {
+            const password = document.getElementById('admin-password').value;
+            
+            if (password === adminConfig.password) {
+                // Successful login
+                document.getElementById('admin-password').value = '';
+                showForm('admin-panel');
+                
+                // Generate QR code if library is loaded
+                if (adminConfig.qrCodeInstalled && typeof QRCode !== 'undefined') {
+                    const qrCodeDiv = document.getElementById('qrcode');
+                    qrCodeDiv.innerHTML = '';
+                    
+                    new QRCode(qrCodeDiv, {
+                        text: window.location.href,
+                        width: 200,
+                        height: 200,
+                        colorDark: "#166634",
+                        colorLight: "#ffffff"
+                    });
+                }
+            } else {
+                // Failed login
+                alert('Incorrect password. Please try again.');
+            }
+        }
+        
+        function exportData() {
+            // Create export container with players and game log
+            const exportData = {
+                players: players,
+                gameLog: gameLog,
+                exportDate: new Date().toISOString()
+            };
+            
+            // Convert to JSON string
+            const jsonData = JSON.stringify(exportData, null, 2);
+            
+            // Display in textarea
+            document.getElementById('export-data').value = jsonData;
+            document.getElementById('export-container').style.display = 'block';
+            document.getElementById('import-container').style.display = 'none';
+        }
+        
+        function copyExportData() {
+            const textarea = document.getElementById('export-data');
+            textarea.select();
+            document.execCommand('copy');
+            
+            showNotification('Data copied to clipboard!');
+        }
+        
+        function showImportForm() {
+            document.getElementById('import-container').style.display = 'block';
+            document.getElementById('export-container').style.display = 'none';
+            document.getElementById('import-data').focus();
+        }
+        
+        function importData() {
+            try {
+                const jsonData = document.getElementById('import-data').value;
+                
+                if (!jsonData.trim()) {
+                    alert('Please paste data to import.');
+                    return;
+                }
+                
+                const importedData = JSON.parse(jsonData);
+                
+                // Validate imported data
+                if (!importedData.players || !Array.isArray(importedData.players) || 
+                    !importedData.gameLog || !Array.isArray(importedData.gameLog)) {
+                    throw new Error('Invalid data format');
+                }
+                
+                // Clear existing data
+                players.length = 0;
+                gameLog.length = 0;
+                
+                // Import players
+                importedData.players.forEach(player => {
+                    players.push({
+                        name: player.name || 'Unknown',
+                        wins: parseInt(player.wins) || 0,
+                        losses: parseInt(player.losses) || 0,
+                        draws: parseInt(player.draws) || 0
+                    });
+                });
+                
+                // Import game log
+                importedData.gameLog.forEach(game => {
+                    gameLog.push({
+                        winner: game.winner || 'Unknown',
+                        loser: game.loser || 'Unknown',
+                        result: game.result || 'win',
+                        date: game.date || new Date().toISOString()
+                    });
+                });
+                
+                // Update UI
+                populateLeaderboard();
+                populateGameLog();
+                populatePlayerDropdowns();
+                
+                // Hide import form
+                document.getElementById('import-container').style.display = 'none';
+                document.getElementById('import-data').value = '';
+                
+                showNotification('Data imported successfully!');
+            } catch (error) {
+                alert('Error importing data: ' + error.message);
+            }
+        }
+        
+        function resetAllData() {
+            if (confirm('Are you sure you want to reset all data? This will remove all players and games.')) {
+                // Clear all data
+                players.length = 0;
+                gameLog.length = 0;
+                
+                // Update UI
+                populateLeaderboard();
+                populateGameLog();
+                
+                showNotification('All data has been reset!');
+            }
+        }
+        
         // Table Population
         function populateLeaderboard() {
             // Sort players by wins
@@ -486,6 +645,16 @@
             const gameLogTableBody = document.getElementById('gameLogTableBody');
             gameLogTableBody.innerHTML = '';
             
+            if (sortedGames.length === 0) {
+                // No games yet
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="4" style="text-align: center;">No games played yet</td>
+                `;
+                gameLogTableBody.appendChild(row);
+                return;
+            }
+            
             sortedGames.forEach(game => {
                 const row = document.createElement('tr');
                 
@@ -526,7 +695,7 @@
                         break;
                     case 'Enter':
                         // Simulate click on focused element
-                        if (activeElement && activeElement.tagName !== 'SELECT' && activeElement.tagName !== 'INPUT') {
+                        if (activeElement && activeElement.tagName !== 'SELECT' && activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
                             activeElement.click();
                         }
                         break;
@@ -541,7 +710,7 @@
         }
         
         function navigateFocus(direction) {
-            const focusableElements = Array.from(document.querySelectorAll('button, select, input'));
+            const focusableElements = Array.from(document.querySelectorAll('button, select, input, textarea'));
             const currentIndex = focusableElements.indexOf(document.activeElement);
             
             let nextIndex;
@@ -554,8 +723,25 @@
             focusableElements[nextIndex].focus();
         }
         
+        // Dynamically load QR code library
+        function loadQRCodeLibrary() {
+            if (typeof QRCode === 'undefined') {
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+                script.onload = function() {
+                    adminConfig.qrCodeInstalled = true;
+                };
+                document.head.appendChild(script);
+            } else {
+                adminConfig.qrCodeInstalled = true;
+            }
+        }
+        
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            // Load QR code library
+            loadQRCodeLibrary();
+            
             // Load saved data
             loadData();
             
@@ -580,6 +766,8 @@
                 loadEditPlayerForm();
             });
             
+            document.getElementById('admin-btn').addEventListener('click', showAdminLogin);
+            
             // Setup form action buttons
             document.getElementById('save-game-btn').addEventListener('click', addNewGame);
             document.getElementById('cancel-game-btn').addEventListener('click', showMainView);
@@ -589,6 +777,26 @@
             
             document.getElementById('update-player-btn').addEventListener('click', editPlayerStats);
             document.getElementById('cancel-edit-btn').addEventListener('click', showMainView);
+            
+            // Setup admin buttons
+            document.getElementById('login-btn').addEventListener('click', attemptLogin);
+            document.getElementById('cancel-login-btn').addEventListener('click', showMainView);
+            document.getElementById('admin-logout-btn').addEventListener('click', showMainView);
+            
+            document.getElementById('export-data-btn').addEventListener('click', exportData);
+            document.getElementById('copy-export-btn').addEventListener('click', copyExportData);
+            document.getElementById('close-export-btn').addEventListener('click', function() {
+                document.getElementById('export-container').style.display = 'none';
+            });
+            
+            document.getElementById('import-data-btn').addEventListener('click', showImportForm);
+            document.getElementById('confirm-import-btn').addEventListener('click', importData);
+            document.getElementById('cancel-import-btn').addEventListener('click', function() {
+                document.getElementById('import-container').style.display = 'none';
+                document.getElementById('import-data').value = '';
+            });
+            
+            document.getElementById('reset-data-btn').addEventListener('click', resetAllData);
             
             // Setup dropdown change handler
             document.getElementById('edit-player').addEventListener('change', loadEditPlayerForm);
