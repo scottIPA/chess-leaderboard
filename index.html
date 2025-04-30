@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Office Chess Leaderboard</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #166634;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 5px solid #0d4d26;
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 32px;
+            margin: 30px 0 15px 0;
+            color: #166634;
+            border-bottom: 2px solid #166634;
+            padding-bottom: 10px;
+        }
+        .subtitle {
+            font-size: 24px;
+            color: #eaeaea;
+        }
+        .leaderboard {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            border-top: 5px solid #166634;
+        }
+        .game-log-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            border-top: 5px solid #662d91; /* Purple from the IPA website */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        th {
+            background-color: #166634;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f0f0f0;
+        }
+        .rank {
+            width: 80px;
+            text-align: center;
+        }
+        .win, .loss, .draw {
+            text-align: center;
+            width: 100px;
+        }
+        .name {
+            width: auto;
+        }
+        .top-player {
+            font-weight: bold;
+            color: #166634;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #888;
+            font-size: 14px;
+            background-color: #1a3c5c;
+            color: white;
+            padding: 20px 0;
+        }
+        .last-updated {
+            font-style: italic;
+            margin-top: 20px;
+            text-align: right;
+            color: #888;
+        }
+        .medal {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 50%;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .gold {
+            background-color: #ffd700;
+            color: #333;
+        }
+        .silver {
+            background-color: #c0c0c0;
+            color: #333;
+        }
+        .bronze {
+            background-color: #cd7f32;
+            color: #333;
+        }
+        .winner-highlight {
+            color: #166634;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Office Chess Leaderboard</h1>
+            <div class="subtitle">Championship Series 2025</div>
+        </header>
+        
+        <div class="leaderboard">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="rank">Rank</th>
+                        <th class="name">Player</th>
+                        <th class="win">Wins</th>
+                        <th class="loss">Losses</th>
+                        <th class="draw">Draws</th>
+                    </tr>
+                </thead>
+                <tbody id="playerTableBody">
+                    <!-- Table will be populated with JavaScript -->
+                </tbody>
+            </table>
+            
+            <div class="last-updated">Last updated: <span id="lastUpdated"></span></div>
+        </div>
+        
+        <div class="game-log-container">
+            <h2>Recent Games</h2>
+            <div class="game-log">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Player 1</th>
+                            <th>Player 2</th>
+                            <th>Winner</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gameLogTableBody">
+                        <!-- Game log will be populated with JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Office Chess Championship — Add your company name here</p>
+        </footer>
+    </div>
+
+    <script>
+        // Sample player data - replace with your actual data
+        const players = [
+            { name: "Sarah Johnson", wins: 15, losses: 3, draws: 2 },
+            { name: "Michael Chen", wins: 12, losses: 5, draws: 3 },
+            { name: "David Rodriguez", wins: 10, losses: 7, draws: 3 },
+            { name: "Emily Wong", wins: 9, losses: 8, draws: 3 },
+            { name: "James Wilson", wins: 8, losses: 9, draws: 3 },
+            { name: "Alexandra Kim", wins: 7, losses: 8, draws: 5 },
+            { name: "Robert Taylor", wins: 6, losses: 10, draws: 4 },
+            { name: "Maria Garcia", wins: 5, losses: 12, draws: 3 },
+            { name: "Thomas Brown", wins: 4, losses: 12, draws: 4 },
+            { name: "Lisa Martinez", wins: 3, losses: 15, draws: 2 }
+        ];
+        
+        // Sample game log data - replace with your actual games
+        const gameLog = [
+            { winner: "Sarah Johnson", loser: "Michael Chen", result: "win", date: "2025-04-29T14:30:00" },
+            { winner: "Emily Wong", loser: "James Wilson", result: "win", date: "2025-04-29T11:15:00" },
+            { winner: "David Rodriguez", loser: "Thomas Brown", result: "win", date: "2025-04-28T16:45:00" },
+            { winner: "Alexandra Kim", loser: "Robert Taylor", result: "win", date: "2025-04-28T13:20:00" },
+            { winner: "Sarah Johnson", loser: "Maria Garcia", result: "win", date: "2025-04-27T15:30:00" },
+            { winner: "Michael Chen", loser: "Lisa Martinez", result: "win", date: "2025-04-27T10:45:00" },
+            { winner: "Sarah Johnson", loser: "Alexandra Kim", result: "win", date: "2025-04-26T16:15:00" },
+            { winner: "David Rodriguez", loser: "Emily Wong", result: "draw", date: "2025-04-26T14:00:00" },
+            { winner: "Michael Chen", loser: "Thomas Brown", result: "win", date: "2025-04-25T11:30:00" },
+            { winner: "James Wilson", loser: "Lisa Martinez", result: "win", date: "2025-04-25T09:45:00" }
+        ];
+        
+        // Data Management (without localStorage)
+        function saveData() {
+            // This is intentionally empty - we're not using localStorage anymore
+            // In a production environment, you might consider:
+            // 1. Using URL parameters to store minimal state
+            // 2. Using cookies if available on the TV
+            // 3. Creating a QR code to a web service where data can be managed
+            console.log("Data changes will be kept in memory until page refresh");
+        }
+        
+        function loadData() {
+            // No loading needed - we're using the initial data
+            console.log("Using initial sample data");
+        }
+        
+        // UI Navigation and Form Management
+        function showForm(formId) {
+            // Hide main view
+            document.getElementById('main-view').style.display = 'none';
+            
+            // Hide all forms
+            document.querySelectorAll('.form-container').forEach(form => {
+                form.style.display = 'none';
+            });
+            
+            // Show requested form
+            document.getElementById(formId).style.display = 'block';
+            
+            // Focus on first input in the form
+            document.getElementById(formId).querySelector('select, input').focus();
+        }
+        
+        function showMainView() {
+            // Hide all forms
+            document.querySelectorAll('.form-container').forEach(form => {
+                form.style.display = 'none';
+            });
+            
+            // Show main view
+            document.getElementById('main-view').style.display = 'block';
+            
+            // Focus on first button
+            document.getElementById('add-game-btn').focus();
+        }
+        
+        function populatePlayerDropdowns() {
+            // Get all player select elements
+            const playerSelects = document.querySelectorAll('#player1, #player2, #edit-player');
+            
+            // Clear existing options
+            playerSelects.forEach(select => {
+                select.innerHTML = '';
+            });
+            
+            // Add player options
+            players.forEach(player => {
+                const option = document.createElement('option');
+                option.value = player.name;
+                option.textContent = player.name;
+                
+                playerSelects.forEach(select => {
+                    select.appendChild(option.cloneNode(true));
+                });
+            });
+        }
+        
+        // Game and Player Management
+        function addNewGame() {
+            const player1 = document.getElementById('player1').value;
+            const player2 = document.getElementById('player2').value;
+            const result = document.getElementById('result').value;
+            
+            // Validation
+            if (player1 === player2) {
+                alert('Please select different players');
+                return;
+            }
+            
+            // Determine winner and loser
+            let winner, loser, resultType;
+            if (result === 'draw') {
+                winner = player1;
+                loser = player2;
+                resultType = 'draw';
+                
+                // Update player stats
+                updatePlayerStats(player1, 0, 0, 1);
+                updatePlayerStats(player2, 0, 0, 1);
+            } else if (result === 'player1') {
+                winner = player1;
+                loser = player2;
+                resultType = 'win';
+                
+                // Update player stats
+                updatePlayerStats(player1, 1, 0, 0);
+                updatePlayerStats(player2, 0, 1, 0);
+            } else {
+                winner = player2;
+                loser = player1;
+                resultType = 'win';
+                
+                // Update player stats
+                updatePlayerStats(player2, 1, 0, 0);
+                updatePlayerStats(player1, 0, 1, 0);
+            }
+            
+            // Add to game log
+            const newGame = {
+                winner: winner,
+                loser: loser,
+                result: resultType,
+                date: new Date().toISOString()
+            };
+            
+            gameLog.unshift(newGame); // Add to beginning of array
+            
+            // Save data
+            saveData();
+            
+            // Update UI
+            populateLeaderboard();
+            populateGameLog();
+            
+            // Return to main view
+            showMainView();
+        }
+        
+        function addNewPlayer() {
+            const playerName = document.getElementById('player-name').value.trim();
+            
+            // Validation
+            if (!playerName) {
+                alert('Please enter a player name');
+                return;
+            }
+            
+            // Check if player already exists
+            if (players.some(p => p.name === playerName)) {
+                alert('A player with this name already exists');
+                return;
+            }
+            
+            // Add new player
+            const newPlayer = {
+                name: playerName,
+                wins: 0,
+                losses: 0,
+                draws: 0
+            };
+            
+            players.push(newPlayer);
+            
+            // Save data
+            saveData();
+            
+            // Update UI
+            populateLeaderboard();
+            populatePlayerDropdowns();
+            
+            // Clear form and return to main view
+            document.getElementById('player-name').value = '';
+            showMainView();
+        }
+        
+        function updatePlayerStats(playerName, winsToAdd, lossesToAdd, drawsToAdd) {
+            // Find player
+            const playerIndex = players.findIndex(p => p.name === playerName);
+            if (playerIndex === -1) return;
+            
+            // Update stats
+            players[playerIndex].wins += winsToAdd;
+            players[playerIndex].losses += lossesToAdd;
+            players[playerIndex].draws += drawsToAdd;
+        }
+        
+        function editPlayerStats() {
+            const playerName = document.getElementById('edit-player').value;
+            const wins = parseInt(document.getElementById('edit-wins').value);
+            const losses = parseInt(document.getElementById('edit-losses').value);
+            const draws = parseInt(document.getElementById('edit-draws').value);
+            
+            // Validation
+            if (isNaN(wins) || isNaN(losses) || isNaN(draws) || wins < 0 || losses < 0 || draws < 0) {
+                alert('Please enter valid numbers for wins, losses, and draws');
+                return;
+            }
+            
+            // Find player and update
+            const playerIndex = players.findIndex(p => p.name === playerName);
+            if (playerIndex !== -1) {
+                players[playerIndex].wins = wins;
+                players[playerIndex].losses = losses;
+                players[playerIndex].draws = draws;
+                
+                // Save data
+                saveData();
+                
+                // Update UI
+                populateLeaderboard();
+                
+                // Return to main view
+                showMainView();
+            }
+        }
+        
+        function loadEditPlayerForm() {
+            const playerSelect = document.getElementById('edit-player');
+            const selectedPlayer = playerSelect.value;
+            
+            // Find player
+            const player = players.find(p => p.name === selectedPlayer);
+            if (!player) return;
+            
+            // Set form values
+            document.getElementById('edit-wins').value = player.wins;
+            document.getElementById('edit-losses').value = player.losses;
+            document.getElementById('edit-draws').value = player.draws;
+        }
+        
+        // Table Population
+        function populateLeaderboard() {
+            // Sort players by wins
+            const sortedPlayers = [...players].sort((a, b) => {
+                // Sort by wins first, then by draws if wins are equal
+                if (b.wins !== a.wins) {
+                    return b.wins - a.wins;
+                } else {
+                    return b.draws - a.draws;
+                }
+            });
+            
+            const tableBody = document.getElementById('playerTableBody');
+            tableBody.innerHTML = '';
+            
+            sortedPlayers.forEach((player, index) => {
+                const row = document.createElement('tr');
+                
+                // Apply top player styling
+                if (index < 3) {
+                    row.classList.add('top-player');
+                }
+                
+                row.innerHTML = `
+                    <td class="rank">
+                        ${index === 0 ? '<span class="medal gold">1</span>' : 
+                          index === 1 ? '<span class="medal silver">2</span>' : 
+                          index === 2 ? '<span class="medal bronze">3</span>' : index + 1}
+                    </td>
+                    <td class="name">${player.name}</td>
+                    <td class="win">${player.wins}</td>
+                    <td class="loss">${player.losses}</td>
+                    <td class="draw">${player.draws}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Update the last updated timestamp
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+        }
+        
+        function populateGameLog() {
+            // Sort games by date (newest first)
+            const sortedGames = [...gameLog].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            const gameLogTableBody = document.getElementById('gameLogTableBody');
+            gameLogTableBody.innerHTML = '';
+            
+            sortedGames.forEach(game => {
+                const row = document.createElement('tr');
+                
+                // Format the date (date only, no time)
+                const gameDate = new Date(game.date);
+                const formattedDate = gameDate.toLocaleDateString();
+                
+                // Only show the winner
+                let winnerName = game.result === 'draw' ? 'Draw' : game.winner;
+                
+                row.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td class="${game.winner === winnerName ? 'winner-highlight' : ''}">${game.winner}</td>
+                    <td>${game.loser}</td>
+                    <td class="winner-highlight">${winnerName}</td>
+                `;
+                
+                gameLogTableBody.appendChild(row);
+            });
+        }
+        
+        // Remote Control Keyboard Navigation
+        function setupKeyboardNavigation() {
+            document.addEventListener('keydown', function(e) {
+                // Remote control navigation with arrow keys
+                const activeElement = document.activeElement;
+                
+                switch(e.key) {
+                    case 'ArrowUp':
+                        // Navigate to previous focusable element
+                        navigateFocus('prev');
+                        e.preventDefault();
+                        break;
+                    case 'ArrowDown':
+                        // Navigate to next focusable element
+                        navigateFocus('next');
+                        e.preventDefault();
+                        break;
+                    case 'Enter':
+                        // Simulate click on focused element
+                        if (activeElement && activeElement.tagName !== 'SELECT' && activeElement.tagName !== 'INPUT') {
+                            activeElement.click();
+                        }
+                        break;
+                    case 'Escape':
+                    case 'Backspace':
+                        // Return to main view
+                        showMainView();
+                        e.preventDefault();
+                        break;
+                }
+            });
+        }
+        
+        function navigateFocus(direction) {
+            const focusableElements = Array.from(document.querySelectorAll('button, select, input'));
+            const currentIndex = focusableElements.indexOf(document.activeElement);
+            
+            let nextIndex;
+            if (direction === 'next') {
+                nextIndex = (currentIndex + 1) % focusableElements.length;
+            } else {
+                nextIndex = (currentIndex - 1 + focusableElements.length) % focusableElements.length;
+            }
+            
+            focusableElements[nextIndex].focus();
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved data
+            loadData();
+            
+            // Populate tables
+            populateLeaderboard();
+            populateGameLog();
+            populatePlayerDropdowns();
+            
+            // Setup form display buttons
+            document.getElementById('add-game-btn').addEventListener('click', function() {
+                populatePlayerDropdowns();
+                showForm('add-game-form');
+            });
+            
+            document.getElementById('add-player-btn').addEventListener('click', function() {
+                showForm('add-player-form');
+            });
+            
+            document.getElementById('edit-player-btn').addEventListener('click', function() {
+                populatePlayerDropdowns();
+                showForm('edit-player-form');
+                loadEditPlayerForm();
+            });
+            
+            // Setup form action buttons
+            document.getElementById('save-game-btn').addEventListener('click', addNewGame);
+            document.getElementById('cancel-game-btn').addEventListener('click', showMainView);
+            
+            document.getElementById('save-player-btn').addEventListener('click', addNewPlayer);
+            document.getElementById('cancel-player-btn').addEventListener('click', showMainView);
+            
+            document.getElementById('update-player-btn').addEventListener('click', editPlayerStats);
+            document.getElementById('cancel-edit-btn').addEventListener('click', showMainView);
+            
+            // Setup dropdown change handler
+            document.getElementById('edit-player').addEventListener('change', loadEditPlayerForm);
+            
+            // Setup keyboard navigation for remote control
+            setupKeyboardNavigation();
+            
+            // Focus on first control button
+            document.getElementById('add-game-btn').focus();
+            
+            // Auto-refresh every 5 minutes
+            setInterval(() => {
+                populateLeaderboard();
+                populateGameLog();
+            }, 5 * 60 * 1000);
+        });
+    </script>
+</body>
+</html>
